@@ -47,14 +47,14 @@ void main(void)
 	NFC_Init();
 
 	// Ports  *P1.0 Should be reassigned to RELAY, P1.1 to GREEN LED, P1.2 RED LED
-	LED_PORT_DIR|= (LED_G);				//Set LED1 pin as output
-	LED_PORT_OUT&= ~(LED_G);				// Set LED1 pin to LOW
+	//LED_PORT_DIR|= (LED_G);				//Set LED1 pin as output
+	//LED_PORT_OUT&= ~(LED_G);				// Set LED1 pin to LOW
 	LED_PORT_DIR|= (LED_R);				//Set LED1 pin as output
-	LED_PORT_OUT&= ~(LED_R);				// Set LED1 pin to LOW
+	LED_PORT_OUT|= (LED_R);				// Set LED1 pin to LOW
 	BUZZER_PORT_DIR|= (BUZZER);   //Set BUZZER pin as output
 	BUZZER_PORT_OUT&= ~(BUZZER);    // Set BUZZER pin to LOW
-	RELAY_PORT_DIR|= (RELAY);   //Set Relay pin as output
-	RELAY_PORT_OUT&= ~(RELAY);    // Set Relay pin to LOW
+	//RELAY_PORT_DIR|= (RELAY);   //Set Relay pin as output
+	//RELAY_PORT_OUT&= ~(RELAY);    // Set Relay pin to LOW
 	RF_RESET_OUT();							// Set RF module reset pin as output
 
 	// Configure UART
@@ -72,7 +72,7 @@ void main(void)
 	__bis_SR_register(GIE);
 
 	// launchpad LED1
-	P1DIR |= BIT0;
+	//P1DIR |= BIT0;
 
 	while(1)
 	{
@@ -90,7 +90,7 @@ void main(void)
 			}
 			CardPacket[1]='C';
 
-			error = Radio_Send_Data(CardPacket, 12, ADDR_SERVER, PAYLOAD_ENC_ON, PCKT_ACK_ON);
+			error = Radio_Send_Data(CardPacket, 12, ADDR_SERVER, PAYLOAD_ENC_OFF, PCKT_ACK_ON);
 			Print_Error(error);
 			if(error == ERR_NO_ACK)
 			{
@@ -166,7 +166,7 @@ void main(void)
 			UART_Send_Data("\r\nFrom:");
 			UART0_Send_ByteToChar(&(RxPacket[2]));
 			UART_Send_Data("\r\nMessage:");
-			for (var = 5; var < len-1; ++var)
+			for (var = 5; var < len; ++var)
 			{
 				UART_Send_Byte(RxPacket[var]);
 			}
@@ -222,9 +222,9 @@ void Action(void)
 	//Open door
 	if (RxPacket[6] == '1'&& !(sysStatus & DOOR_STATUS))
 	{
-		LED_PORT_OUT &= ~(LED_R);  //RED LED OFF
-		LED_PORT_OUT |= (LED_G);  //GREEN LED ON
-		RELAY_PORT_OUT |= (RELAY);  //RELAY ON
+		//LED_PORT_OUT &= ~(LED_R);  //RED LED OFF
+		//LED_PORT_OUT |= (LED_G);  //GREEN LED ON
+		//RELAY_PORT_OUT |= (RELAY);  //RELAY ON
 		BUZZER_PORT_OUT |= (BUZZER); //BUZZER ON
 		McuDelayMillisecond(100);  //Delay 0.5s
 		BUZZER_PORT_OUT &= ~(BUZZER); //BUZZER OFF
@@ -235,9 +235,9 @@ void Action(void)
 	//Close door
 	else if  (RxPacket[6] != '1'&& (sysStatus & DOOR_STATUS))
 	{
-		LED_PORT_OUT |= (LED_R);  //RED LED ON
-		LED_PORT_OUT &= ~(LED_G);  //GREEN LED OFF
-		RELAY_PORT_OUT &= ~(RELAY);  //RELAY OFF
+		//LED_PORT_OUT |= (LED_R);  //RED LED ON
+		//LED_PORT_OUT &= ~(LED_G);  //GREEN LED OFF
+		//RELAY_PORT_OUT &= ~(RELAY);  //RELAY OFF
 		BUZZER_PORT_OUT |= (BUZZER); //BUZZER ON
 		McuDelayMillisecond(300);  //Delay 0.5s
 		BUZZER_PORT_OUT &= ~(BUZZER); //BUZZER OFF
@@ -245,11 +245,11 @@ void Action(void)
 	}
 
 	//Master Mode Enabled
-	if (RxPacket[7] == '1'&& !(sysStatus & MASTER_MODE))
+	if (RxPacket[7] == '1' && !(sysStatus & MASTER_MODE))
 	{
 		int i;
 		LED_PORT_OUT |= (LED_R);  //RED LED ON
-		LED_PORT_OUT |= (LED_G);  //GREEN LED ON
+		//LED_PORT_OUT |= (LED_G);  //GREEN LED ON
 		for(i=0;i<4;i++)
 		{
 			BUZZER_PORT_OUT |= (BUZZER); //BUZZER ON
@@ -260,18 +260,18 @@ void Action(void)
 		sysStatus |= MASTER_MODE;
 
 	}
-	else if (RxPacket[7] != '1'&& (sysStatus & MASTER_MODE))
+	else if (RxPacket[7] == '0' && (sysStatus & MASTER_MODE))
 	{
 		int i;
-		LED_PORT_OUT &= ~(LED_G);  //GREEN LED OFF
-		LED_PORT_OUT |= (LED_R);  //RED LED ON
+		LED_PORT_OUT &= ~(LED_R);  //GREEN LED OFF
+		//LED_PORT_OUT |= (LED_R);  //RED LED ON
 		for(i=0;i<4;i++)
-			{
+		{
 			BUZZER_PORT_OUT |= (BUZZER); //BUZZER ON
 			McuDelayMillisecond(50);  //Delay 0.5s
 			BUZZER_PORT_OUT &= ~(BUZZER); //BUZZER OFF
 			McuDelayMillisecond(200);  //Delay 0.5s
-			}
+		}
 		sysStatus &= ~MASTER_MODE;
 
 	}
@@ -283,14 +283,14 @@ void Action(void)
 	{
 		uint8 j;
 
-		LED_PORT_OUT &= ~(LED_G);  //GREEN LED OFF
+		//LED_PORT_OUT &= ~(LED_G);  //GREEN LED OFF
 		for(j=0 ;j<3;j++)
 		{
-			LED_PORT_OUT |= (LED_R);  //RED LED ON
+			//LED_PORT_OUT |= (LED_R);  //RED LED ON
 			BUZZER_PORT_OUT |= (BUZZER); //BUZZER ON
 			McuDelayMillisecond(500);  //Delay 0.5s
 			BUZZER_PORT_OUT &= ~(BUZZER); //BUZZER OFF
-			LED_PORT_OUT &= ~(LED_R);  //RED LED OFF
+			//LED_PORT_OUT &= ~(LED_R);  //RED LED OFF
 			McuDelayMillisecond(500);  //Delay 0.5s
 		}
 	}

@@ -37,8 +37,8 @@
 #define LED_PORT_DIR      	(P1DIR)
 #define LED_PORT_OUT       	(P1OUT)
 
-#define LED_R  	     		BIT2	// P1.2 (RED)
-#define LED_G       		BIT1	// P1.1 (GREEN)
+#define LED_R  	     		BIT0	// P1.2 (RED)
+//#define LED_G       		BIT1	// P1.1 (GREEN)
 
 /********** BUZZER & RELAY  ***********/
 
@@ -47,7 +47,7 @@
 #define RELAY_PORT_DIR      	(P1DIR)
 #define RELAY_PORT_OUT       	(P1OUT)
 #define BUZZER  	 		BIT5	// P2.5
-#define RELAY       		BIT0	// P1.0
+//#define RELAY       		BIT0	// P1.0
 
 /********* SPI ************/
 #define SPI_PORT_DIR      	(P1DIR)
